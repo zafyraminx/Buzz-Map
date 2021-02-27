@@ -1,8 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
 }
+
 
 android {
     compileSdkVersion 30
@@ -24,28 +27,66 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
 dependencies {
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.fragment:fragment-ktx:1.3.0'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.android.material:material:1.3.0'
 
-    //Dependency Injection
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
+
+    // LiveData & ViewModel
+    // Databinding and ViewModel
+    kapt 'com.android.databinding:compiler:3.1.4'
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.5'
+
+    // Dagger
+    implementation 'com.google.dagger:dagger-android:2.29.1'
+    implementation 'com.google.dagger:dagger-android-support:2.29.1'
+    kapt 'com.google.dagger:dagger-android-processor:2.27'
     kapt 'com.google.dagger:dagger-compiler:2.27'
-    implementation 'com.google.dagger:dagger:2.29.1'
+
+    //Conductor
+    implementation 'com.bluelinelabs:conductor:3.0.0'
+    implementation 'com.bluelinelabs:conductor-androidx-transition:3.0.0'
+    implementation 'com.bluelinelabs:conductor-viewpager:3.0.0'
+    implementation 'com.bluelinelabs:conductor-viewpager2:3.0.0'
+    implementation 'com.bluelinelabs:conductor-rxlifecycle2:3.0.0'
+    implementation 'com.bluelinelabs:conductor-autodispose:3.0.0'
+    implementation 'com.bluelinelabs:conductor-archlifecycle:3.0.0'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:26.5.0')
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    //LeakCanary 2
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+
+    // Lifecycle Architecture
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.3.0"
+
+    //Logs
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // Testing Libraries
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

@@ -1,1 +1,1 @@
-# Buzz-Map
+# Buzz Map
