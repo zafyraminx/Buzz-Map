@@ -14,5 +14,5 @@ abstract class ControllerBindingModule {
     @Binds
     @IntoMap
     @ClassKey(MapController::class)
-    internal abstract fun bindLobbyControllerInjectorFactory(factory: MapControllerComponent.Factory): AndroidInjector.Factory<*>
+    internal abstract fun bindMapControllerInjectorFactory(factory: MapControllerComponent.Factory): AndroidInjector.Factory<*>
 }
