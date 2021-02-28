@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.krdevteam.buzzmap">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name="com.krdevteam.buzzmap.Application"
@@ -15,23 +16,13 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-<!--        <activity android:name="com.krdevteam.buzzmap.mvvm.activities.lobby.LobbyActivity">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-
-        <activity android:name="com.krdevteam.buzzmap.mvvm.activities.room.RoomActivity"
-            android:parentActivityName="com.krdevteam.buzzmap.mvvm.activities.lobby.LobbyActivity" />
-
-        <activity android:name="com.krdevteam.buzzmap.mvvm.activities.register.RegisterActivity" />
-
-        <activity android:name="com.krdevteam.buzzmap.mvvm.activities.login.LoginActivity" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity android:name="com.krdevteam.buzzmap.activity.MainActivity" >
             <intent-filter>

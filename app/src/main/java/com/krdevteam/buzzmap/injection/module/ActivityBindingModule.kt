@@ -12,5 +12,4 @@ abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = [MainModule::class])
     internal abstract fun mainActivity(): MainActivity
-
 }

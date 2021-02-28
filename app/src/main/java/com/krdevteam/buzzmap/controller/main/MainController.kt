@@ -4,28 +4,29 @@ import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
-import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.Router
-import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.*
 import com.bluelinelabs.conductor.viewpager.RouterPagerAdapter
 import com.krdevteam.buzzmap.Application
 import com.krdevteam.buzzmap.R
+import com.krdevteam.buzzmap.controller.article.ArticleController
 import com.krdevteam.buzzmap.controller.base.BaseController
-import com.krdevteam.buzzmap.controller.news.NewsViewModel
-import com.krdevteam.buzzmap.injection.scope.ActivityScoped
 import com.krdevteam.buzzmap.controller.map.MapController
+import com.krdevteam.buzzmap.controller.news.NewsController
+import com.krdevteam.buzzmap.injection.scope.ActivityScoped
+import com.krdevteam.buzzmap.util.AppConstants.Companion.TAG_LOGIN_CONTROLLER
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.android.synthetic.main.fragment_lobby.view.*
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
 
 @ActivityScoped
-class MainController : BaseController<MainCViewModel, MainCViewState>(R.layout.controller_main) {
+class MainController : BaseController<MainControllerViewModel, MainControllerViewState>(R.layout.controller_main) {
 
     private var mLifecycleRegistry = LifecycleRegistry(this)
     @Inject
-    lateinit var viewModel: NewsViewModel
+    override lateinit var viewModel: MainControllerViewModel
 
     private val pagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
@@ -37,21 +38,34 @@ class MainController : BaseController<MainCViewModel, MainCViewState>(R.layout.c
 
         override fun getCount() = 4
 
-        override fun getPageTitle(position: Int) = "Page $position"
+        override fun getPageTitle(position: Int) = this@MainController.getTitle(position)
     }
 
     private fun getController(position: Int):Controller
     {
         return when (position) {
             2 -> {
-                MapController()
+                ArticleController()
             }
             1 -> {
+                NewsController()
+            }
+            0 -> {
                 MapController()
             }
             else -> {
-                MapController()
+                ArticleController()
             }
+        }
+    }
+
+    private fun getTitle(position: Int):String
+    {
+        return when (position) {
+            2 -> "Article"
+            1 -> "News"
+            0 -> "Map"
+            else -> "Profile"
         }
     }
 
@@ -82,26 +96,19 @@ class MainController : BaseController<MainCViewModel, MainCViewState>(R.layout.c
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-
-            R.id.nav_signout -> {
-                viewModel.handleSignOut()
-                true
-            }
-            else -> false
+    override fun updateUi(state: MainControllerViewState) {
+        Timber.d("UpdateUI")
+        if (state.controller != null)
+        {
+            Timber.d("controller :${state.controller}")
+                viewController(state.controller!!)
         }
     }
 
-    private fun viewModelOwnerController() {
-        router.pushController(RouterTransaction.with(MapController()))
-    }
+    private fun viewController(controller: Controller) {
+        Timber.d("controller: $controller")
+        viewModel.clearState()
+        router.pushController(RouterTransaction.with(controller).tag(TAG_LOGIN_CONTROLLER))
 
-    override fun updateUi(state: MainCViewState) {
-        TODO("Not yet implemented")
     }
 }

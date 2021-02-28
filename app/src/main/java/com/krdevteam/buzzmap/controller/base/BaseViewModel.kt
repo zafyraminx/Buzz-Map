@@ -2,7 +2,7 @@ package com.krdevteam.buzzmap.controller.base
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.krdevteam.buzzmap.activity.MainActivity
+import com.krdevteam.buzzmap.controller.login.LoginController
 import com.krdevteam.buzzmap.util.repository.FirebaseRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,10 +19,9 @@ abstract class BaseViewModel<S: ViewState>(
     protected val networkScope = CoroutineScope(Dispatchers.IO + networkJob)
 
     open fun checkUserLoggedIn() {
-
+        Timber.d("checkUserLoggedIn")
         if (firebaseRepository.user() == null) {
-            viewState.newActivity = MainActivity::class
-            viewState.clearActivityOnIntent = true
+            viewState.controller = LoginController()
             updateUi()
         }
     }

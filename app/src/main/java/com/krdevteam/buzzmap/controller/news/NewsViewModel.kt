@@ -3,6 +3,8 @@ package com.krdevteam.buzzmap.controller.news
 import com.krdevteam.buzzmap.activity.MainActivity
 import com.krdevteam.buzzmap.injection.scope.AppScoped
 import com.krdevteam.buzzmap.controller.base.BaseViewModel
+import com.krdevteam.buzzmap.controller.base.ViewState
+import com.krdevteam.buzzmap.controller.main.MainControllerViewState
 import com.krdevteam.buzzmap.util.repository.FirebaseRepository
 import com.krdevteam.buzzmap.util.AppConstants
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -89,8 +91,12 @@ class NewsViewModel @Inject constructor(
     fun getNewsList() {
         Timber.d("getNewsList")
         firebaseRepository.observeNews()
-        viewState.messagesLiveData = firebaseRepository.newsLiveData
-        Timber.d("getNewsList ${viewState.messagesLiveData}")
+        viewState.newsLiveData = firebaseRepository.newsLiveData
+        Timber.d("getNewsList ${viewState.newsLiveData}")
         updateUi()
+    }
+
+    fun clearState() {
+        viewState = ViewState() as NewsViewState
     }
 }

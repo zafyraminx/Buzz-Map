@@ -1,16 +1,22 @@
 package com.krdevteam.buzzmap.controller.base
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
+import com.krdevteam.buzzmap.controller.map.MapViewModel
+import com.krdevteam.buzzmap.entity.News
+import timber.log.Timber
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 abstract class BaseController<V: BaseViewModel<S>, S: ViewState>(
     @LayoutRes private val layoutRes: Int,
@@ -22,16 +28,25 @@ abstract class BaseController<V: BaseViewModel<S>, S: ViewState>(
 
     protected open val title: String? = null
 
-    protected abstract fun updateUi(state: S)
-
     init {
         addLifecycleListener(object : LifecycleListener() {
             override fun postCreateView(controller: Controller, view: View) {
                 onViewCreated(view)
-
+                observeState()
+                viewModel.checkUserLoggedIn()
 //                toolbar?.let { configureToolbar(it) }
             }
         })
+    }
+
+    abstract var viewModel: V
+
+    abstract fun updateUi(state: S)
+
+    private val observer: Observer<ViewState> = Observer<ViewState> { state -> updateUi(state as S) }
+
+    private fun observeState() {
+        viewModel.getState().observeForever(observer)
     }
 
     override fun onCreateView(
@@ -76,5 +91,15 @@ abstract class BaseController<V: BaseViewModel<S>, S: ViewState>(
 
     open fun configureMenu(toolbar: Toolbar) {
         toolbar.menu.clear()
+    }
+
+    protected fun KClass<*>.start(clearingLast: Boolean, extras: Bundle) {
+        Timber.d("Start Intent")
+        val intent = Intent(activity, this.java)
+        intent.putExtras(extras)
+        startActivity(intent)
+
+        viewModel.resetNewActivity()
+        if (clearingLast) activity?.finish()
     }
 }

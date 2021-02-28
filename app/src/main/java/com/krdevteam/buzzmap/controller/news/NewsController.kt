@@ -1,34 +1,31 @@
-package com.krdevteam.buzzmap.controller.map
+package com.krdevteam.buzzmap.controller.news
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.Observer
-import com.bluelinelabs.conductor.Controller
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.RouterTransaction
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.krdevteam.buzzmap.Application
 import com.krdevteam.buzzmap.R
 import com.krdevteam.buzzmap.controller.base.BaseController
 import com.krdevteam.buzzmap.entity.News
 import com.krdevteam.buzzmap.injection.scope.ActivityScoped
-import kotlinx.android.synthetic.main.controller_map.view.*
+import com.krdevteam.buzzmap.util.adapter.NewsAdapter
+import kotlinx.android.synthetic.main.controller_news.view.*
 import timber.log.Timber
 import javax.inject.Inject
 
+
 @ActivityScoped
-class MapController : BaseController<MapViewModel, MapViewState>(R.layout.controller_map) {
+class NewsController : BaseController<NewsViewModel, NewsViewState>(R.layout.controller_news)
+{
     private var mLifecycleRegistry = LifecycleRegistry(this)
     @Inject
-    override lateinit var viewModel: MapViewModel
+    override lateinit var viewModel: NewsViewModel
 
-    private val observer: Observer<List<News>> = Observer<List<News>> { t ->
-//        setListAdapter(t)
-    }
+    private val observer: Observer<List<News>> = Observer<List<News>> { t -> setListAdapter(t) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,8 +40,7 @@ class MapController : BaseController<MapViewModel, MapViewState>(R.layout.contro
     }
 
     override fun onViewCreated(view: View) {
-        view.controller_map_view.getMapAsync(viewModel.setGoogleMap())
-        viewModel.checkUserLoggedIn()
+        getNewsList()
     }
 
     override fun onAttach(view: View) {
@@ -63,18 +59,6 @@ class MapController : BaseController<MapViewModel, MapViewState>(R.layout.contro
         viewModel.viewState.newsLiveData?.observeForever(observer)
     }
 
-    private fun setMarkers(news:News)
-    {
-        viewModel.viewState.map?.apply {
-            val point = LatLng(news.location.latitude, news.location.longitude)
-            addMarker(
-                MarkerOptions()
-                    .position(point)
-                    .title(news.title)
-            )
-        }
-    }
-
     override fun getLifecycle(): Lifecycle {
         return mLifecycleRegistry
     }
@@ -85,10 +69,32 @@ class MapController : BaseController<MapViewModel, MapViewState>(R.layout.contro
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
 
-    private fun viewController(controller: Controller) {
-        router.pushController(RouterTransaction.with(controller))
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
     }
 
-    override fun updateUi(state: MapViewState) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+
+            R.id.nav_signout -> {
+                viewModel.handleSignOut()
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun setListAdapter(messages: List<News>) {
+        val adapter = NewsAdapter(messages)
+        view?.controller_news_recyclerView?.layoutManager = LinearLayoutManager(activity)
+        view?.controller_news_recyclerView?.adapter = adapter
+    }
+
+    private fun viewModelOwnerController() {
+        router.pushController(RouterTransaction.with(NewsController()))
+    }
+
+    override fun updateUi(state: NewsViewState) {
+        Timber.d("updateUi")
     }
 }

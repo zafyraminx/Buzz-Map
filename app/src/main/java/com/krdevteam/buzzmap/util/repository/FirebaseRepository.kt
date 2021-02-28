@@ -10,6 +10,8 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.krdevteam.buzzmap.entity.News
+import com.krdevteam.buzzmap.util.AppConstants.Companion.NEWS_ARTICLE
+import com.krdevteam.buzzmap.util.AppConstants.Companion.USER_TYPE
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import java.util.*
@@ -24,6 +26,7 @@ class FirebaseRepository {
     val chatMessagesLiveData = MutableLiveData<List<ChatMessage>>()
 
     val newsLiveData = MutableLiveData<List<News>>()
+    var articleId = ""
 
     fun user(): FirebaseUser? = auth.currentUser
 
@@ -46,6 +49,28 @@ class FirebaseRepository {
                 Pair("image", user()!!.photoUrl)
             ))
             .await()
+    }
+
+    suspend fun addUser(type: String): Void? {
+
+//        return firestore.collection(USER_TYPE)
+//                .document(user()!!.uid)
+//                .collection(type)
+//                .add(mapOf(
+//                        Pair("id", user()!!.uid),
+//                        Pair("name", user()!!.displayName),
+//                        Pair("image", user()!!.photoUrl)
+//                ))
+//                .await()
+
+        return firestore.collection(USER_TYPE)
+                .document("${user()!!.uid}$type")
+                .set(mapOf(
+                        Pair("email", user()!!.email),
+                        Pair("id", user()!!.uid),
+                        Pair("type", type)
+                ))
+                .await()
     }
 
     fun sendChatMessage(message: String) {
@@ -86,39 +111,9 @@ class FirebaseRepository {
     }
 
     fun observeNews() {
-
-//        firestore.collection("news_article")
-////            .document(roomId)
-////            .collection("messages")
-////            .orderBy("timestamp")
-//            .addSnapshotListener { messagesSnapshot, exception ->
-//
-//                if (exception != null) {
-//                    exception.printStackTrace()
-//                    return@addSnapshotListener
-//                }
-//
-//                val messages = messagesSnapshot?.documents?.map {
-//                    News(
-//                        it["uid"] as String,
-//                        it["location"] as GeoPoint,
-//                        it["dateTime"] as Timestamp,
-//                        it["title"] as String,
-//                        it["details"] as String,
-//                        it["imageURL"] as ArrayList<String>
-//                    )
-//                }
-//
-//                messages?.let { newsLiveData.postValue(messages!!) }
-//            }
-//        firestore.firestoreSettings = settings
-        firestore.collection("news_article")
+        firestore.collection(NEWS_ARTICLE)
             .get()
             .addOnSuccessListener { documents ->
-//                for (document in documents) {
-//                    Timber.d("${document.id} => ${document.data}")
-//                }
-
                 val messages = documents.map {
                     Timber.d("${it.id} => ${it.data}")
                     News(
@@ -136,6 +131,27 @@ class FirebaseRepository {
 //                Log.w(TAG, "Error getting documents: ", exception)
                 exception.printStackTrace()
             }
+    }
 
+    fun sendArticle(news: News) {
+        val newsData = mapOf(
+            Pair("uid", user()!!.uid),
+            Pair("location", news.location),
+            Pair("dateTime", Timestamp.now()),
+            Pair("title", news.title),
+            Pair("details", news.details),
+            Pair("imageURL", news.imageURL)
+        )
+        if (articleId!="")
+        {
+            firestore.collection(NEWS_ARTICLE)
+            .document(articleId)
+            .set(newsData)
+        }
+        else
+        {
+            firestore.collection(NEWS_ARTICLE)
+            .add(newsData)
+        }
     }
 }

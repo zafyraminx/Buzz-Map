@@ -1,17 +1,16 @@
-package com.krdevteam.buzzmap.controller.news
+package com.krdevteam.buzzmap.controller.article
 
+import com.krdevteam.buzzmap.activity.MainActivity
 import com.krdevteam.buzzmap.injection.providers.BaseResourceProvider
 import com.krdevteam.buzzmap.injection.providers.ResourceProvider
 import com.krdevteam.buzzmap.injection.scope.ActivityScoped
-import com.krdevteam.buzzmap.injection.scope.FragmentScoped
-import com.krdevteam.buzzmap.activity.MainActivity
-import com.krdevteam.buzzmap.controller.map.MapController
+import com.krdevteam.buzzmap.injection.scope.ControllerScoped
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 
-@Module(includes = [NewsModule.NewsAbstractModule::class])
-class NewsModule {
+@Module(includes = [ArticleModule.NewsAbstractModule::class])
+class ArticleModule {
 
     @ActivityScoped
     @Provides
@@ -21,8 +20,8 @@ class NewsModule {
 
     @Module
     interface NewsAbstractModule {
-        @FragmentScoped
+        @ControllerScoped
         @ContributesAndroidInjector
-        fun newController(): NewsController
+        fun articleController(): ArticleController
     }
 }

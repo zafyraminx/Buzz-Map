@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/option_editor"
+        android:title="@string/user_editor" />
+    <item android:id="@+id/option_journalist"
+        android:title="@string/user_journalist" />
+</menu>
