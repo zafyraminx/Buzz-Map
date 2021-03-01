@@ -8,6 +8,7 @@ import com.krdevteam.buzzmap.injection.module.*
 import com.krdevteam.buzzmap.injection.scope.AppScoped
 import com.krdevteam.buzzmap.controller.map.MapController
 import com.krdevteam.buzzmap.controller.news.NewsController
+import com.krdevteam.buzzmap.controller.profile.ProfileController
 import com.krdevteam.buzzmap.controller.register.RegisterController
 import dagger.BindsInstance
 import dagger.Component
@@ -31,6 +32,7 @@ interface AppComponent: AndroidInjector<Application> {
     fun inject(controller: ArticleController)
     fun inject(controller: LoginController)
     fun inject(controller: RegisterController)
+    fun inject(controller: ProfileController)
 
     @Component.Builder
     interface Builder {

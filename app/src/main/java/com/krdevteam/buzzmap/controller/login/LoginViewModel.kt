@@ -38,11 +38,11 @@ class LoginViewModel @Inject constructor(
 
     fun clearState() {
         viewState.controller = null
-        viewState.newActivity = null
-        viewState.clearActivityOnIntent = false
         viewState.controller = null
         viewState.showMenu = false
+        viewState.listItem = ArrayList()
         viewState.userType = "Editor"
+        viewState.submitEnabled = true
     }
 
     private fun loginWithEmailAndPassword(email: String, password: String) {

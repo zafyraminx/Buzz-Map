@@ -12,60 +12,51 @@ import com.krdevteam.buzzmap.controller.article.ArticleController
 import com.krdevteam.buzzmap.controller.base.BaseController
 import com.krdevteam.buzzmap.controller.map.MapController
 import com.krdevteam.buzzmap.controller.news.NewsController
+import com.krdevteam.buzzmap.controller.profile.ProfileController
+import com.krdevteam.buzzmap.entity.TabItem
 import com.krdevteam.buzzmap.injection.scope.ActivityScoped
 import com.krdevteam.buzzmap.util.AppConstants.Companion.TAG_LOGIN_CONTROLLER
+import com.krdevteam.buzzmap.util.AppConstants.Companion.TAG_NEWS_CONTROLLER
+import com.krdevteam.buzzmap.util.AppConstants.Companion.TAG_PROFILE_CONTROLLER
 import kotlinx.android.synthetic.main.controller_main.view.*
 import kotlinx.android.synthetic.main.fragment_lobby.view.*
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-
 @ActivityScoped
-class MainController : BaseController<MainControllerViewModel, MainControllerViewState>(R.layout.controller_main) {
+class MainController : BaseController<MainControllerViewModel, MainControllerViewState>(R.layout.controller_main),
+    ProfileController.OnUpdateControllerListener, NewsController.OnUpdateControllerListener {
 
     private var mLifecycleRegistry = LifecycleRegistry(this)
     @Inject
     override lateinit var viewModel: MainControllerViewModel
 
+
     private val pagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
-                val page = this@MainController.getController(position)
+                val page = this@MainController.getController(position).controller
                 router.setRoot(RouterTransaction.with(page))
             }
         }
 
-        override fun getCount() = 4
+        override fun getCount() = 3
 
-        override fun getPageTitle(position: Int) = this@MainController.getTitle(position)
+        override fun getPageTitle(position: Int) = this@MainController.getController(position).title
     }
 
-    private fun getController(position: Int):Controller
-    {
-        return when (position) {
-            2 -> {
-                ArticleController()
-            }
-            1 -> {
-                NewsController()
-            }
-            0 -> {
-                MapController()
-            }
-            else -> {
-                ArticleController()
-            }
-        }
+    override fun onDetach(view: View) {
+        super.onDetach(view)
     }
 
-    private fun getTitle(position: Int):String
+    private fun getController(position: Int):TabItem
     {
         return when (position) {
-            2 -> "Article"
-            1 -> "News"
-            0 -> "Map"
-            else -> "Profile"
+//            2 -> TabItem("Article",ArticleController())
+            1 -> TabItem("News",NewsController(this))
+            0 -> TabItem("Map",MapController())
+            else -> TabItem("Profile",ProfileController(this))
         }
     }
 
@@ -105,10 +96,26 @@ class MainController : BaseController<MainControllerViewModel, MainControllerVie
         }
     }
 
+    override fun onDestroyView(view: View) {
+        super.onDestroyView(view)
+        Timber.d("onDestroyView")
+    }
+
+    override fun onUpdateUI(tag: String) {
+        if (tag == TAG_PROFILE_CONTROLLER)
+            viewModel.checkUserLoggedIn()
+        else if (tag == TAG_NEWS_CONTROLLER)
+            viewController(ArticleController(),tag)
+    }
+
     private fun viewController(controller: Controller) {
         Timber.d("controller: $controller")
         viewModel.clearState()
         router.pushController(RouterTransaction.with(controller).tag(TAG_LOGIN_CONTROLLER))
+    }
 
+    private fun viewController(controller: Controller, tag:String) {
+        Timber.d("controller: $controller")
+        router.pushController(RouterTransaction.with(controller))
     }
 }

@@ -10,5 +10,7 @@ open class ViewState (
         var controller: Controller? = null,
         var showMenu: Boolean = false,
         var userType: String = "Editor",
+        open var listItem: ArrayList<Any> = ArrayList(),
         var intentExtras: Bundle = Bundle()
-)
+) {
+}

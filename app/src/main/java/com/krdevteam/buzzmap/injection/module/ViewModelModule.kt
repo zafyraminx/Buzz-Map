@@ -8,6 +8,7 @@ import com.krdevteam.buzzmap.controller.login.LoginViewModel
 import com.krdevteam.buzzmap.controller.main.MainControllerViewModel
 import com.krdevteam.buzzmap.controller.map.MapViewModel
 import com.krdevteam.buzzmap.controller.news.NewsViewModel
+import com.krdevteam.buzzmap.controller.profile.ProfileViewModel
 import com.krdevteam.buzzmap.controller.register.RegisterViewModel
 import com.krdevteam.buzzmap.injection.ViewModelKey
 import com.krdevteam.buzzmap.injection.scope.AppScoped
@@ -52,5 +53,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(RegisterViewModel::class)
     abstract fun bindRegisterViewModel(viewModel: RegisterViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ProfileViewModel::class)
+    abstract fun bindProfileViewModel(viewModel: ProfileViewModel): ViewModel
 
 }

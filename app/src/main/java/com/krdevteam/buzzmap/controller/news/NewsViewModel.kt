@@ -90,13 +90,19 @@ class NewsViewModel @Inject constructor(
 
     fun getNewsList() {
         Timber.d("getNewsList")
-        firebaseRepository.observeNews()
+        firebaseRepository.user()?.uid?.let { firebaseRepository.observeNews(it) }
         viewState.newsLiveData = firebaseRepository.newsLiveData
         Timber.d("getNewsList ${viewState.newsLiveData}")
         updateUi()
     }
 
     fun clearState() {
-        viewState = ViewState() as NewsViewState
+        viewState.controller = null
+        viewState.newActivity = null
+        viewState.clearActivityOnIntent = false
+        viewState.controller = null
+        viewState.showMenu = false
+        viewState.listItem = ArrayList()
+        viewState.userType = "Editor"
     }
 }

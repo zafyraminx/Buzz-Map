@@ -13,6 +13,8 @@ class AppConstants {
         val TAG_MAIN_CONTROLLER                                     = "TAG_MAIN_CONTROLLER"
         val TAG_LOGIN_CONTROLLER                                    = "TAG_LOGIN_CONTROLLER"
         val TAG_REGISTER_CONTROLLER                                 = "TAG_REGISTER_CONTROLLER"
+        val TAG_PROFILE_CONTROLLER                                  = "TAG_PROFILE_CONTROLLER"
+        val TAG_NEWS_CONTROLLER                                     = "TAG_NEWS_CONTROLLER"
 
     }
 

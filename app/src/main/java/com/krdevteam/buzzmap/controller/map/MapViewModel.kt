@@ -23,7 +23,7 @@ class MapViewModel @Inject constructor(
 
     fun getNewsList() {
         Timber.d("getNewsList")
-        firebaseRepository.observeNews()
+        firebaseRepository.user()?.uid?.let { firebaseRepository.observeNews(it) }
         viewState.newsLiveData = firebaseRepository.newsLiveData
         Timber.d("getNewsList ${viewState.newsLiveData}")
         updateUi()
@@ -45,6 +45,7 @@ class MapViewModel @Inject constructor(
         viewState.clearActivityOnIntent = false
         viewState.controller = null
         viewState.showMenu = false
+        viewState.listItem = ArrayList()
         viewState.userType = "Editor"
     }
 }

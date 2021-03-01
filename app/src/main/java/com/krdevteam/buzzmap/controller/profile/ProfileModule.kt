@@ -1,16 +1,16 @@
-package com.krdevteam.buzzmap.controller.main
+package com.krdevteam.buzzmap.controller.profile
 
+import com.krdevteam.buzzmap.activity.MainActivity
 import com.krdevteam.buzzmap.injection.providers.BaseResourceProvider
 import com.krdevteam.buzzmap.injection.providers.ResourceProvider
 import com.krdevteam.buzzmap.injection.scope.ActivityScoped
 import com.krdevteam.buzzmap.injection.scope.ControllerScoped
-import com.krdevteam.buzzmap.activity.MainActivity
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 
-@Module(includes = [MainCModule.NewsAbstractModule::class])
-class MainCModule {
+@Module(includes = [ProfileModule.RegisterAbstractModule::class])
+class ProfileModule {
 
     @ActivityScoped
     @Provides
@@ -19,9 +19,9 @@ class MainCModule {
     }
 
     @Module
-    interface NewsAbstractModule {
+    interface RegisterAbstractModule {
         @ControllerScoped
         @ContributesAndroidInjector
-        fun MainController(): MainController
+        fun profileController(): ProfileController
     }
 }

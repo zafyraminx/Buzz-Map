@@ -137,6 +137,7 @@ class RegisterViewModel @Inject constructor(
         viewState.clearActivityOnIntent = false
         viewState.controller = null
         viewState.showMenu = false
+        viewState.listItem = ArrayList()
         viewState.userType = "Editor"
     }
 

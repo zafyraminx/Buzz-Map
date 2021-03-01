@@ -10,6 +10,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.krdevteam.buzzmap.entity.News
+import com.krdevteam.buzzmap.entity.User
 import com.krdevteam.buzzmap.util.AppConstants.Companion.NEWS_ARTICLE
 import com.krdevteam.buzzmap.util.AppConstants.Companion.USER_TYPE
 import kotlinx.coroutines.tasks.await
@@ -26,6 +27,7 @@ class FirebaseRepository {
     val chatMessagesLiveData = MutableLiveData<List<ChatMessage>>()
 
     val newsLiveData = MutableLiveData<List<News>>()
+    val userLiveData = MutableLiveData<User>()
     var articleId = ""
 
     fun user(): FirebaseUser? = auth.currentUser
@@ -43,11 +45,13 @@ class FirebaseRepository {
         return firestore.collection("rooms")
             .document(roomId)
             .collection("users")
-            .add(mapOf(
-                Pair("id", user()!!.uid),
-                Pair("name", user()!!.displayName),
-                Pair("image", user()!!.photoUrl)
-            ))
+            .add(
+                mapOf(
+                    Pair("id", user()!!.uid),
+                    Pair("name", user()!!.displayName),
+                    Pair("image", user()!!.photoUrl)
+                )
+            )
             .await()
     }
 
@@ -64,13 +68,15 @@ class FirebaseRepository {
 //                .await()
 
         return firestore.collection(USER_TYPE)
-                .document("${user()!!.uid}$type")
-                .set(mapOf(
-                        Pair("email", user()!!.email),
-                        Pair("id", user()!!.uid),
-                        Pair("type", type)
-                ))
-                .await()
+            .document("${user()!!.uid}$type")
+            .set(
+                mapOf(
+                    Pair("email", user()!!.email),
+                    Pair("id", user()!!.uid),
+                    Pair("type", type)
+                )
+            )
+            .await()
     }
 
     fun sendChatMessage(message: String) {
@@ -78,11 +84,13 @@ class FirebaseRepository {
         firestore.collection("rooms")
             .document(roomId)
             .collection("messages")
-            .add(mapOf(
-                Pair("text", message),
-                Pair("user", user()!!.uid),
-                Pair("timestamp", Timestamp.now())
-            ))
+            .add(
+                mapOf(
+                    Pair("text", message),
+                    Pair("user", user()!!.uid),
+                    Pair("timestamp", Timestamp.now())
+                )
+            )
     }
 
     fun observeChatMessages() {
@@ -110,8 +118,16 @@ class FirebaseRepository {
             }
     }
 
-    fun observeNews() {
+    fun observeNews(type: String) {
+        if (type == "Editor")
+            loadEditorNews(type)
+        else
+            loadJournalistNews(type)
+    }
+
+    private fun loadEditorNews(type: String) {
         firestore.collection(NEWS_ARTICLE)
+            .whereEqualTo("status", type != "Editor")
             .get()
             .addOnSuccessListener { documents ->
                 val messages = documents.map {
@@ -122,7 +138,36 @@ class FirebaseRepository {
                         it["dateTime"] as Timestamp,
                         it["title"] as String,
                         it["details"] as String,
-                        it["imageURL"] as ArrayList<String>
+                        it["imageURL"] as ArrayList<String>,
+                        it["status"] as Boolean,
+                        it["editor"] as String
+                    )
+                }
+                messages.let { newsLiveData.postValue(messages) }
+            }
+            .addOnFailureListener { exception ->
+//                Log.w(TAG, "Error getting documents: ", exception)
+                exception.printStackTrace()
+            }
+    }
+
+    private fun loadJournalistNews(type: String) {
+        firestore.collection(NEWS_ARTICLE)
+            .whereEqualTo("status", type != "Editor")
+            .whereEqualTo("uid", user()?.uid)
+            .get()
+            .addOnSuccessListener { documents ->
+                val messages = documents.map {
+                    Timber.d("${it.id} => ${it.data}")
+                    News(
+                        it["uid"] as String,
+                        it["location"] as GeoPoint,
+                        it["dateTime"] as Timestamp,
+                        it["title"] as String,
+                        it["details"] as String,
+                        it["imageURL"] as ArrayList<String>,
+                        it["status"] as Boolean,
+                        it["editor"] as String
                     )
                 }
                 messages.let { newsLiveData.postValue(messages) }
@@ -142,16 +187,35 @@ class FirebaseRepository {
             Pair("details", news.details),
             Pair("imageURL", news.imageURL)
         )
-        if (articleId!="")
-        {
+        if (articleId != "") {
             firestore.collection(NEWS_ARTICLE)
-            .document(articleId)
-            .set(newsData)
-        }
-        else
-        {
+                .document(articleId)
+                .set(newsData)
+        } else {
             firestore.collection(NEWS_ARTICLE)
-            .add(newsData)
+                .add(newsData)
         }
+    }
+
+    fun observeUser() {
+        firestore.collection(USER_TYPE)
+            .whereEqualTo("id", user()?.uid)
+            .get()
+            .addOnSuccessListener { documents ->
+                var user: User? = null
+                documents.map {
+                    Timber.d("${it.id} => ${it.data}")
+                    user = User(
+                        it["id"] as String,
+                        it["type"] as String,
+                        it["email"] as String
+                    )
+                }
+                user.let { userLiveData.postValue(user!!) }
+            }
+            .addOnFailureListener { exception ->
+//                Log.w(TAG, "Error getting documents: ", exception)
+                exception.printStackTrace()
+            }
     }
 }

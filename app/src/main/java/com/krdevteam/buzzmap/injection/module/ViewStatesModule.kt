@@ -5,6 +5,7 @@ import com.krdevteam.buzzmap.controller.login.LoginViewState
 import com.krdevteam.buzzmap.controller.main.MainControllerViewState
 import com.krdevteam.buzzmap.controller.map.MapViewState
 import com.krdevteam.buzzmap.controller.news.NewsViewState
+import com.krdevteam.buzzmap.controller.profile.ProfileViewState
 import com.krdevteam.buzzmap.controller.register.RegisterViewState
 import com.krdevteam.buzzmap.injection.scope.AppScoped
 import dagger.Module
@@ -36,5 +37,9 @@ class ViewStatesModule {
     @Provides
     @AppScoped
     fun provideRegisterViewState(): RegisterViewState = RegisterViewState()
+
+    @Provides
+    @AppScoped
+    fun provideProfileViewState(): ProfileViewState = ProfileViewState()
 
 }

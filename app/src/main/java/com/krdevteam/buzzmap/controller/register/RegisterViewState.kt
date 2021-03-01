@@ -10,6 +10,4 @@ class RegisterViewState(
     controller: Controller? = null,
     clearActivityOnIntent: Boolean = false,
     var errorMessage: String = ""
-): ViewState(
-    newActivity, clearActivityOnIntent
-)
+): ViewState()
