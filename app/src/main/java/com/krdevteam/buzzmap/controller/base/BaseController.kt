@@ -71,6 +71,14 @@ abstract class BaseController<V: BaseViewModel<S>, S: ViewState>(
         super.onChangeStarted(changeHandler, changeType)
 
         if (changeType.isEnter) {
+            var parentController = parentController
+            while (parentController != null) {
+                if (parentController is BaseController<*, *> && parentController.title != null) {
+                    return
+                }
+                parentController = parentController.parentController
+            }
+            Timber.d("onChangeStarted $parentController")
 //            toolbar?.let { configureMenu(it) }
         }
     }

@@ -4,22 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.Observer
-import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.RouterTransaction
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 import com.krdevteam.buzzmap.Application
 import com.krdevteam.buzzmap.R
 import com.krdevteam.buzzmap.controller.base.BaseController
-import com.krdevteam.buzzmap.controller.main.MainController
 import com.krdevteam.buzzmap.entity.News
 import com.krdevteam.buzzmap.entity.User
 import com.krdevteam.buzzmap.injection.scope.ActivityScoped
-import com.krdevteam.buzzmap.util.AppConstants
 import kotlinx.android.synthetic.main.controller_article.view.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,6 +23,13 @@ import javax.inject.Inject
 @ActivityScoped
 class ArticleController : BaseController<ArticleViewModel, ArticleViewState>(R.layout.controller_article)
 {
+    private var singleInstance: ArticleController? = null
+
+    fun getInstance(): ArticleController? {
+        if (singleInstance == null) singleInstance = ArticleController()
+        return singleInstance
+    }
+
     private var mLifecycleRegistry = LifecycleRegistry(this)
     @Inject
     override lateinit var viewModel: ArticleViewModel
@@ -90,14 +92,14 @@ class ArticleController : BaseController<ArticleViewModel, ArticleViewState>(R.l
         if (state.isClose) viewController()
     }
 
-    private fun updateUserUI(user:User)
+    private fun updateUserUI(user: User)
     {
         view?.controller_add_news_text_user_type?.text  = user.type
         view?.controller_add_news_text_title?.text = title(user.type)
         view?.controller_add_news_button_approve?.visibility = showApproveButton(user.type)
     }
 
-    private fun title(type:String) : String
+    private fun title(type: String) : String
     {
         return if (type == "Editor")
             "Edit & Approve News Article"
@@ -105,7 +107,7 @@ class ArticleController : BaseController<ArticleViewModel, ArticleViewState>(R.l
             "Add News Article"
     }
 
-    private fun showApproveButton(type:String) : Int
+    private fun showApproveButton(type: String) : Int
     {
         return if (type == "Editor")
             View.VISIBLE

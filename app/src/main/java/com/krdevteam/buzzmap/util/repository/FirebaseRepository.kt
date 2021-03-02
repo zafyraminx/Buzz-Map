@@ -1,7 +1,10 @@
 package com.krdevteam.buzzmap.util.repository
 
+import android.content.Context
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.MutableLiveData
-import com.krdevteam.buzzmap.entity.ChatMessage
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -9,8 +12,11 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.krdevteam.buzzmap.R
+import com.krdevteam.buzzmap.entity.ChatMessage
 import com.krdevteam.buzzmap.entity.News
 import com.krdevteam.buzzmap.entity.User
+import com.krdevteam.buzzmap.injection.providers.ResourceProvider
 import com.krdevteam.buzzmap.util.AppConstants.Companion.NEWS_ARTICLE
 import com.krdevteam.buzzmap.util.AppConstants.Companion.USER_TYPE
 import kotlinx.coroutines.tasks.await
@@ -185,7 +191,9 @@ class FirebaseRepository {
             Pair("dateTime", Timestamp.now()),
             Pair("title", news.title),
             Pair("details", news.details),
-            Pair("imageURL", news.imageURL)
+            Pair("imageURL", news.imageURL),
+            Pair("status", news.status),
+            Pair("editor", news.editor)
         )
         if (articleId != "") {
             firestore.collection(NEWS_ARTICLE)
@@ -217,5 +225,37 @@ class FirebaseRepository {
 //                Log.w(TAG, "Error getting documents: ", exception)
                 exception.printStackTrace()
             }
+    }
+
+    fun fbAuth()
+    {
+//        callbackManager = CallbackManager.Factory.create()
+//
+//        binding.buttonFacebookLogin.setReadPermissions("email", "public_profile")
+//        binding.buttonFacebookLogin.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+//            override fun onSuccess(loginResult: LoginResult) {
+//                Log.d(TAG, "facebook:onSuccess:$loginResult")
+//                handleFacebookAccessToken(loginResult.accessToken)
+//            }
+//
+//            override fun onCancel() {
+//                Timber.d("facebook:onCancel")
+//                // ...
+//            }
+//
+//            override fun onError(error: FacebookException) {
+//                Timber.d("facebook:onError", error)
+//                // ...
+//            }
+//        })
+    }
+
+    fun GmailAuth(context:Context)
+    {
+        val res = ResourceProvider(context)
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(res.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
     }
 }

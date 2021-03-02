@@ -16,7 +16,7 @@ class ProfileViewModel @Inject constructor(
 
     override fun checkUserLoggedIn() {
         if (firebaseRepository.user() == null) {
-            viewState.controller = LoginController()
+            viewState.controller = LoginController().getInstance()
             updateUi()
         }
     }
@@ -40,9 +40,9 @@ class ProfileViewModel @Inject constructor(
     private fun signOut() {
         clearState()
         firebaseRepository.auth.signOut()
-        viewState.controller = LoginController()
+        viewState.controller = LoginController().getInstance()
         val liveData = MutableLiveData<Controller>()
-        liveData.apply { LoginController() }
+        liveData.apply { LoginController().getInstance() }
         updateUi()
     }
 

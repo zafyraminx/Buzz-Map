@@ -1,6 +1,7 @@
 package com.krdevteam.buzzmap.injection.module
 
 import com.krdevteam.buzzmap.controller.article.ArticleViewState
+import com.krdevteam.buzzmap.controller.dialog.DialogViewState
 import com.krdevteam.buzzmap.controller.login.LoginViewState
 import com.krdevteam.buzzmap.controller.main.MainControllerViewState
 import com.krdevteam.buzzmap.controller.map.MapViewState
@@ -41,5 +42,9 @@ class ViewStatesModule {
     @Provides
     @AppScoped
     fun provideProfileViewState(): ProfileViewState = ProfileViewState()
+
+    @Provides
+    @AppScoped
+    fun provideDialogViewState(): DialogViewState = DialogViewState()
 
 }

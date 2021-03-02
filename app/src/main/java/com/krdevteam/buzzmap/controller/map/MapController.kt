@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.krdevteam.buzzmap.Application
 import com.krdevteam.buzzmap.R
 import com.krdevteam.buzzmap.controller.base.BaseController
+import com.krdevteam.buzzmap.controller.login.LoginController
 import com.krdevteam.buzzmap.entity.News
 import com.krdevteam.buzzmap.injection.scope.ActivityScoped
 import kotlinx.android.synthetic.main.controller_map.view.*
@@ -22,6 +23,13 @@ import javax.inject.Inject
 
 @ActivityScoped
 class MapController : BaseController<MapViewModel, MapViewState>(R.layout.controller_map) {
+    private var singleInstance: MapController? = null
+
+    fun getInstance(): MapController? {
+        if (singleInstance == null) singleInstance = MapController()
+        return singleInstance
+    }
+
     private var mLifecycleRegistry = LifecycleRegistry(this)
     @Inject
     override lateinit var viewModel: MapViewModel

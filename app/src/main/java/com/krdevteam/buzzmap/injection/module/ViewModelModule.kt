@@ -3,6 +3,7 @@ package com.krdevteam.buzzmap.injection.module
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.krdevteam.buzzmap.controller.article.ArticleViewModel
+import com.krdevteam.buzzmap.controller.dialog.DialogViewModel
 import com.krdevteam.buzzmap.controller.login.LoginController
 import com.krdevteam.buzzmap.controller.login.LoginViewModel
 import com.krdevteam.buzzmap.controller.main.MainControllerViewModel
@@ -58,5 +59,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ProfileViewModel::class)
     abstract fun bindProfileViewModel(viewModel: ProfileViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DialogViewModel::class)
+    abstract fun bindDialogViewModel(viewModel: DialogViewModel): ViewModel
 
 }

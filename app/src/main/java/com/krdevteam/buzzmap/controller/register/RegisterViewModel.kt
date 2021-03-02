@@ -9,6 +9,7 @@ import com.krdevteam.buzzmap.injection.scope.AppScoped
 import com.krdevteam.buzzmap.util.repository.FirebaseRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -21,7 +22,7 @@ class RegisterViewModel @Inject constructor(
     override fun checkUserLoggedIn() {
 
 //        if (firebaseRepository.user() != null) {
-//            viewState.controller = LoginController()
+//            viewState.controller = LoginController().getInstance()
 //            updateUi()
 //        }
     }
@@ -30,8 +31,13 @@ class RegisterViewModel @Inject constructor(
         registerWithEmailAndPassword(username, password, confirmPassword, userType)
     }
 
+    fun handleFBButtonClicked()
+    {
+        firebaseRepository.user()
+    }
+
     fun handleLoginTextviewClicked() {
-        viewState.controller = LoginController()
+        viewState.controller = LoginController().getInstance()
         updateUi()
     }
 

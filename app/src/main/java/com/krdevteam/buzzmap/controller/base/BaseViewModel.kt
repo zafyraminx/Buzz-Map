@@ -21,7 +21,7 @@ abstract class BaseViewModel<S: ViewState>(
     open fun checkUserLoggedIn() {
         Timber.d("checkUserLoggedIn")
         if (firebaseRepository.user() == null) {
-            viewState.controller = LoginController()
+            viewState.controller = LoginController().getInstance()
             updateUi()
         }
     }

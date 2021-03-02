@@ -2,6 +2,7 @@ package com.krdevteam.buzzmap.injection.component
 
 import com.krdevteam.buzzmap.Application
 import com.krdevteam.buzzmap.controller.article.ArticleController
+import com.krdevteam.buzzmap.controller.dialog.DialogController
 import com.krdevteam.buzzmap.controller.login.LoginController
 import com.krdevteam.buzzmap.controller.main.MainController
 import com.krdevteam.buzzmap.injection.module.*
@@ -33,6 +34,7 @@ interface AppComponent: AndroidInjector<Application> {
     fun inject(controller: LoginController)
     fun inject(controller: RegisterController)
     fun inject(controller: ProfileController)
+    fun inject(controller: DialogController)
 
     @Component.Builder
     interface Builder {

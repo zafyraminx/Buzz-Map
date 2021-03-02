@@ -10,6 +10,7 @@ import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.krdevteam.buzzmap.Application
 import com.krdevteam.buzzmap.R
+import com.krdevteam.buzzmap.controller.article.ArticleController
 import com.krdevteam.buzzmap.controller.base.BaseController
 import com.krdevteam.buzzmap.controller.main.MainController
 import com.krdevteam.buzzmap.injection.scope.ActivityScoped
@@ -22,6 +23,13 @@ import javax.inject.Inject
 @ActivityScoped
 class LoginController : BaseController<LoginViewModel, LoginViewState>(R.layout.controller_login)
 {
+    private var singleInstance: LoginController? = null
+
+    fun getInstance(): LoginController? {
+        if (singleInstance == null) singleInstance = LoginController()
+        return singleInstance
+    }
+
     private var mLifecycleRegistry = LifecycleRegistry(this)
     @Inject
     override lateinit var viewModel: LoginViewModel

@@ -20,7 +20,7 @@ class MainControllerViewModel @Inject constructor(
     override fun checkUserLoggedIn() {
         Timber.d("checkUserLoggedIn")
         if (firebaseRepository.user() == null) {
-            viewState.controller = LoginController()
+            viewState.controller = LoginController().getInstance()
             updateUi()
         }
     }
@@ -37,7 +37,7 @@ class MainControllerViewModel @Inject constructor(
     }
 
     private fun launchLoginController() {
-        viewState.controller = LoginController()
+        viewState.controller = LoginController().getInstance()
         updateUi()
     }
 

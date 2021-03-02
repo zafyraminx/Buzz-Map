@@ -1,7 +1,9 @@
 package com.krdevteam.buzzmap.controller.news
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.Observer
@@ -11,6 +13,7 @@ import com.bluelinelabs.conductor.Controller
 import com.ed2e.ed2eapp.adapter.ViewHolderFactory
 import com.krdevteam.buzzmap.Application
 import com.krdevteam.buzzmap.R
+import com.krdevteam.buzzmap.controller.article.ArticleController
 import com.krdevteam.buzzmap.controller.base.BaseController
 import com.krdevteam.buzzmap.controller.profile.ProfileController
 import com.krdevteam.buzzmap.entity.News
@@ -25,6 +28,13 @@ import javax.inject.Inject
 @ActivityScoped
 class NewsController() : BaseController<NewsViewModel, NewsViewState>(R.layout.controller_news)
 {
+    private var singleInstance: NewsController? = null
+
+    fun getInstance(): NewsController? {
+        if (singleInstance == null) singleInstance = NewsController()
+        return singleInstance
+    }
+
     private var mLifecycleRegistry = LifecycleRegistry(this)
     @Inject
     override lateinit var viewModel: NewsViewModel
@@ -58,7 +68,6 @@ class NewsController() : BaseController<NewsViewModel, NewsViewState>(R.layout.c
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        getNewsList()
         view.controller_news_fab_add.setOnClickListener { openArticlePage() }
     }
 
@@ -83,28 +92,13 @@ class NewsController() : BaseController<NewsViewModel, NewsViewState>(R.layout.c
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-
-            R.id.nav_signout -> {
-                viewModel.handleSignOut()
-                true
-            }
-            else -> false
-        }
-    }
-
     private fun setListAdapter(news: List<News>) {
         val array = arrayListOf<Any>()
         array.addAll(news)
         val adapter = object : BaseRecyclerViewAdapter<Any>(array, object :
                 ItemClickListener<Any> {
             override fun onItemClick(v: View, item: Any, position: Int) {
-
+                viewModel.handleItemClick(item)
             }
         }) {
             override fun getLayoutId(position: Int, obj: Any): Int {
@@ -125,11 +119,18 @@ class NewsController() : BaseController<NewsViewModel, NewsViewState>(R.layout.c
     override fun updateUi(state: NewsViewState) {
         Timber.d("updateUi")
         view?.controller_news_fab_add?.visibility = showFabButton(state.userType)
+        if (state.controller != null)
+        {
+            Timber.d("controller: ${state.controller}")
+            Timber.d("controller: ${ArticleController().getInstance()}")
+            openArticlePage()
+        }
+
     }
 
     private fun showFabButton(type:String) : Int
     {
-        return if (type == "Editor")
+        return if (type != "Editor")
             View.VISIBLE
         else
             View.GONE
@@ -137,9 +138,10 @@ class NewsController() : BaseController<NewsViewModel, NewsViewState>(R.layout.c
 
     private fun openArticlePage()
     {
+        Timber.d("openArticlePage")
         targetController?.let { listener ->
             (listener as OnUpdateControllerListener).onUpdateUI(AppConstants.TAG_NEWS_CONTROLLER)
-//            router.popController(this)
+            router.popController(this)
         }
     }
 }

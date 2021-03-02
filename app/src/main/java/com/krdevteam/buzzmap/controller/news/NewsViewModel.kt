@@ -1,10 +1,12 @@
 package com.krdevteam.buzzmap.controller.news
 
 import com.krdevteam.buzzmap.activity.MainActivity
+import com.krdevteam.buzzmap.controller.article.ArticleController
 import com.krdevteam.buzzmap.injection.scope.AppScoped
 import com.krdevteam.buzzmap.controller.base.BaseViewModel
 import com.krdevteam.buzzmap.controller.base.ViewState
 import com.krdevteam.buzzmap.controller.main.MainControllerViewState
+import com.krdevteam.buzzmap.entity.News
 import com.krdevteam.buzzmap.util.repository.FirebaseRepository
 import com.krdevteam.buzzmap.util.AppConstants
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -104,5 +106,10 @@ class NewsViewModel @Inject constructor(
         viewState.showMenu = false
         viewState.listItem = ArrayList()
         viewState.userType = "Editor"
+    }
+
+    fun handleItemClick(news: Any) {
+        viewState.controller = ArticleController().getInstance()
+        updateUi()
     }
 }

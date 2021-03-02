@@ -36,27 +36,27 @@ class MainController : BaseController<MainControllerViewModel, MainControllerVie
     private val pagerAdapter = object : RouterPagerAdapter(this) {
         override fun configureRouter(router: Router, position: Int) {
             if (!router.hasRootController()) {
-                val page = this@MainController.getController(position).controller
-                router.setRoot(RouterTransaction.with(page))
+                val page = this@MainController.getController(position)?.controller
+                page?.let { RouterTransaction.with(it) }?.let { router.setRoot(it) }
             }
         }
 
         override fun getCount() = 3
 
-        override fun getPageTitle(position: Int) = this@MainController.getController(position).title
+        override fun getPageTitle(position: Int) = this@MainController.getController(position)?.title
     }
 
     override fun onDetach(view: View) {
         super.onDetach(view)
     }
 
-    private fun getController(position: Int):TabItem
+    private fun getController(position: Int): TabItem?
     {
         return when (position) {
 //            2 -> TabItem("Article",ArticleController())
-            1 -> TabItem("News",NewsController(this))
-            0 -> TabItem("Map",MapController())
-            else -> TabItem("Profile",ProfileController(this))
+            1 -> NewsController(this).getInstance()?.let { TabItem("News", it) }
+            0 -> MapController().getInstance()?.let { TabItem("Map", it) }
+            else -> ProfileController(this).getInstance()?.let { TabItem("Profile", it) }
         }
     }
 
@@ -105,7 +105,7 @@ class MainController : BaseController<MainControllerViewModel, MainControllerVie
         if (tag == TAG_PROFILE_CONTROLLER)
             viewModel.checkUserLoggedIn()
         else if (tag == TAG_NEWS_CONTROLLER)
-            viewController(ArticleController(),tag)
+            ArticleController().getInstance()?.let { viewController(it,tag) }
     }
 
     private fun viewController(controller: Controller) {
@@ -115,7 +115,7 @@ class MainController : BaseController<MainControllerViewModel, MainControllerVie
     }
 
     private fun viewController(controller: Controller, tag:String) {
-        Timber.d("controller: $controller")
+        Timber.d("controller: $controller $tag")
         router.pushController(RouterTransaction.with(controller))
     }
 }

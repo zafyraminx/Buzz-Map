@@ -14,6 +14,7 @@ import com.krdevteam.buzzmap.Application
 import com.krdevteam.buzzmap.R
 import com.krdevteam.buzzmap.controller.base.BaseController
 import com.krdevteam.buzzmap.controller.login.LoginController
+import com.krdevteam.buzzmap.controller.news.NewsController
 import com.krdevteam.buzzmap.injection.scope.ActivityScoped
 import com.krdevteam.buzzmap.util.AppConstants.Companion.TAG_PROFILE_CONTROLLER
 import com.krdevteam.buzzmap.util.adapter.BaseRecyclerViewAdapter
@@ -23,6 +24,13 @@ import javax.inject.Inject
 
 @ActivityScoped
 class ProfileController() : BaseController<ProfileViewModel, ProfileViewState>(R.layout.controller_profile) {
+    private var singleInstance: ProfileController? = null
+
+    fun getInstance(): ProfileController? {
+        if (singleInstance == null) singleInstance = ProfileController()
+        return singleInstance
+    }
+
     private var mLifecycleRegistry = LifecycleRegistry(this)
 
     constructor(targetController: OnUpdateControllerListener) : this() {
